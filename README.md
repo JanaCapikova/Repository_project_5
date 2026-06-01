@@ -7,7 +7,7 @@ Tento projekt je konzolová aplikace pro správu úkolů.
 Uživatel může v aplikaci:
 
 - přidat nový úkol,
-- zobrazit všechny úkoly,
+- zobrazit úkoly se stavem nezahájeno nebo probíhá,
 - aktualizovat stav úkolu,
 - odstranit úkol.
 
@@ -44,7 +44,7 @@ Databáze i tabulka se vytvoří automaticky při spuštění programu, pokud je
 PROJECT_5_ENGETO/
 │
 ├── main.py
-├── .env
+├── .env.example
 ├── README.md
 ├── requirements.txt
 │
@@ -54,6 +54,7 @@ PROJECT_5_ENGETO/
 │   └── ukoly.py
 │
 └── tests/
+    ├──conftest.py
     └── test_ukoly_db.py
 
 ## Použité technologie
@@ -134,7 +135,7 @@ python -m pytest tests/test_ukoly_db.py
 
 Při úspěšném spuštění testů by se měl zobrazit výsledek podobný:
 
-6 passed
+7 passed
 
 ## Testovací databáze
 
