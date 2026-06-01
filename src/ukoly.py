@@ -38,13 +38,14 @@ def pridat_ukol(conn):
 
 
 def zobrazit_ukoly(conn):
-    # Funkce zobrazí všechny úkoly uložené v databázi.
+    # Funkce zobrazí úkoly se stavem "nezahájeno" nebo "probíhá"
     cursor = conn.cursor()
 
-    # Načtení všech úkolů z databáze
+    # Načtení pouze úkolů se stavem "nezahájeno" nebo "probíhá"
     cursor.execute(f"""
         SELECT id, nazev, popis, stav, datum_vytvoreni
         FROM {DB_UKOLY_NAZEV_TABULKY}
+        WHERE stav IN ('nezahájeno', 'probíhá')
         ORDER BY id
     """)
 
@@ -65,25 +66,41 @@ def aktualizovat_ukol(conn):
     zobrazit_ukoly(conn)
     print()
 
-    ukol_id = input("Zadejte ID úkolu, u kterého chcete změnit stav: ").strip()
+    while True:
+        ukol_id = input("Zadejte ID úkolu, u kterého chcete změnit stav: ").strip()
 
-    if not ukol_id.isdigit():
-        print("Neplatný vstup. Zadejte číslo úkolu ze seznamu.")
-        return
+        if not ukol_id.isdigit():
+            print("Neplatný vstup. Zadejte číslo úkolu ze seznamu.")
+            continue
+
+        cursor = conn.cursor()
+
+        # Ověření, zda úkol se zadaným ID existuje
+        cursor.execute(f"""
+            SELECT id
+            FROM {DB_UKOLY_NAZEV_TABULKY}
+            WHERE id = %s
+        """, (ukol_id,))
+
+        existujici_ukol = cursor.fetchone()
+        cursor.close()
+
+        if not existujici_ukol:
+            print("Úkol s tímto ID nebyl nalezen. Zkuste to znovu.")
+            continue
+
+        break
 
     print("\nVyberte nový stav:")
-    print("1. nezahájeno")
-    print("2. probíhá")
-    print("3. hotovo")
+    print("1. probíhá")
+    print("2. hotovo")
 
     volba_stavu = input("Zadejte číslo stavu: ").strip()
 
     # Převod volby uživatele na hodnotu ukládanou do databáze
     if volba_stavu == "1":
-        novy_stav = "nezahájeno"
-    elif volba_stavu == "2":
         novy_stav = "probíhá"
-    elif volba_stavu == "3":
+    elif volba_stavu == "2":
         novy_stav = "hotovo"
     else:
         print("Neplatná volba stavu.")
@@ -99,14 +116,9 @@ def aktualizovat_ukol(conn):
     """, (novy_stav, ukol_id))
 
     conn.commit()
-
-    # Pokud nebyl nalezen žádný řádek s daným ID
-    if cursor.rowcount == 0:
-        print("Úkol s tímto ID nebyl nalezen.")
-    else:
-        print("Stav úkolu byl změněn.")
-
     cursor.close()
+
+    print("Stav úkolu byl změněn.")
 
 
 def odstranit_ukol(conn):

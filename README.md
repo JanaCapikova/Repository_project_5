@@ -74,9 +74,9 @@ pip install -r requirements.txt
 
 ## Nastavení databáze
 
-V hlavní složce projektu je potřeba vytvořit soubor `.env`.
+V hlavní složce projektu je potřeba vytvořit soubor `.env`. Soubor `.env` není součástí odevzdaného projektu, protože obsahuje citlivé přihlašovací údaje k databázi.
 
-Soubor `.env` obsahuje přihlašovací údaje k MySQL databázi:
+V projektu je připravený vzorový soubor `.env.example`, obsahující přihlašovací údaje k MySQL databázi:
 
 DB_HOST=localhost
 DB_USER=root
